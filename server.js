@@ -21,6 +21,7 @@ app.get('/grades', async (req, res) => {
   const pb = new PocketBase(PB_URL);
 
   try {
+    // Получаем все записи из коллекции "grades"
     const grades = await pb.collection('grades').getFullList();
     res.json(grades);
   } catch (err) {
@@ -29,8 +30,8 @@ app.get('/grades', async (req, res) => {
   }
 });
 
-// SPA fallback для Express 5
-app.get('/:path(*)', (req, res) => {
+// SPA fallback (Express 5 совместимый)
+app.get(/^\/.*$/, (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 

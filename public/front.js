@@ -1,39 +1,60 @@
-// Получаем конфигурацию с сервера
 fetch('/config')
   .then(res => res.json())
   .then(config => {
-    const pb = new PocketBase(config.pbUrl); // UMD версия создаёт глобальный PocketBase
+    const pb = new PocketBase(config.pbUrl);
 
     pb.collection('grades').getFullList()
       .then(grades => {
+
         if (!grades.length) {
-          document.getElementById('content').innerText = 'Нет данных для отображения.';
+          document.getElementById('content').innerHTML =
+            '<div class="error">Нет данных</div>';
           return;
         }
 
-        // Создаём HTML таблицу
-        let html = '<table><thead><tr>';
-        html += '<th>Имя студента</th><th>Предмет</th><th>Оценка</th><th>Статус</th>';
-        html += '</tr></thead><tbody>';
+        let html = `
+          <table>
+            <thead>
+              <tr>
+                <th>Студент</th>
+                <th>Предмет</th>
+                <th>Оценка</th>
+                <th>Статус</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
 
         grades.forEach(g => {
-          html += `<tr>
-            <td>${g.student_name || ''}</td>
-            <td>${g.subject || ''}</td>
-            <td>${g.score || ''}</td>
-            <td>${g.status || ''}</td>
-          </tr>`;
+
+          let statusClass = '';
+          let statusText = g.status || '';
+
+          if (statusText === 'Arvestatud') statusClass = 'done';
+          else if (statusText === 'Tegemisel') statusClass = 'progress';
+          else if (statusText === 'Järelvastamine') statusClass = 'fail';
+
+          html += `
+            <tr>
+              <td>${g.student_name}</td>
+              <td>${g.subject}</td>
+              <td><strong>${g.score}</strong></td>
+              <td><span class="status ${statusClass}">${statusText}</span></td>
+            </tr>
+          `;
         });
 
         html += '</tbody></table>';
+
         document.getElementById('content').innerHTML = html;
+
       })
       .catch(err => {
-        console.error(err);
-        document.getElementById('content').innerText = 'Ошибка при загрузке данных: ' + err.message;
+        document.getElementById('content').innerHTML =
+          `<div class="error">Ошибка: ${err.message}</div>`;
       });
   })
   .catch(err => {
-    console.error(err);
-    document.getElementById('content').innerText = 'Ошибка при получении конфигурации: ' + err.message;
+    document.getElementById('content').innerHTML =
+      `<div class="error">Ошибка конфигурации: ${err.message}</div>`;
   });

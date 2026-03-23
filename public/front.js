@@ -1,46 +1,39 @@
-// Подгружаем конфиг сервера
+// Получаем конфигурацию с сервера
 fetch('/config')
   .then(res => res.json())
-  .then(async config => {
-    const pbUrl = config.pbUrl;
+  .then(config => {
+    const pb = new PocketBase(config.pbUrl); // UMD версия создаёт глобальный PocketBase
 
-    try {
-      // Подключаемся к PocketBase
-      const { default: PocketBase } = await import('pocketbase');
-      const pb = new PocketBase(pbUrl);
+    pb.collection('grades').getFullList()
+      .then(grades => {
+        if (!grades.length) {
+          document.getElementById('content').innerText = 'Нет данных для отображения.';
+          return;
+        }
 
-      // Получаем все записи из коллекции grades
-      const records = await pb.collection('grades').getFullList();
+        // Создаём HTML таблицу
+        let html = '<table><thead><tr>';
+        html += '<th>Имя студента</th><th>Предмет</th><th>Оценка</th><th>Статус</th>';
+        html += '</tr></thead><tbody>';
 
-      if (!records.length) {
-        document.getElementById('content').innerHTML = 'Нет записей для отображения.';
-        return;
-      }
+        grades.forEach(g => {
+          html += `<tr>
+            <td>${g.student_name || ''}</td>
+            <td>${g.subject || ''}</td>
+            <td>${g.score || ''}</td>
+            <td>${g.status || ''}</td>
+          </tr>`;
+        });
 
-      // Строим HTML-таблицу
-      let table = '<table>';
-      table += '<tr><th>Студент</th><th>Предмет</th><th>Оценка</th><th>Статус</th></tr>';
-
-      records.forEach(r => {
-        table += `<tr>
-                    <td>${r.student_name}</td>
-                    <td>${r.subject}</td>
-                    <td>${r.score}</td>
-                    <td>${r.status}</td>
-                  </tr>`;
+        html += '</tbody></table>';
+        document.getElementById('content').innerHTML = html;
+      })
+      .catch(err => {
+        console.error(err);
+        document.getElementById('content').innerText = 'Ошибка при загрузке данных: ' + err.message;
       });
-
-      table += '</table>';
-      document.getElementById('content').innerHTML = table;
-
-    } catch (err) {
-      console.error(err);
-      document.getElementById('content').innerHTML = '';
-      document.getElementById('error').innerText = 'Ошибка при загрузке данных: ' + err.message;
-    }
   })
   .catch(err => {
     console.error(err);
-    document.getElementById('content').innerHTML = '';
-    document.getElementById('error').innerText = 'Ошибка при получении конфигурации: ' + err.message;
+    document.getElementById('content').innerText = 'Ошибка при получении конфигурации: ' + err.message;
   });

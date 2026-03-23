@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Лист достижений курсанта</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pocketbase/0.25.2/pocketbase.umd.js"></script>
+</head>
+<body>
+<script>
+let pb = null;
+
+async function init() {
+  try {
+    const config = await fetch('/config').then(res => res.json());
+    pb = new PocketBase(config.pbUrl);
+
+    // Проверка ?auth= (если оставляем)
+    const urlParams = new URLSearchParams(window.location.search);
+    const auth = urlParams.get('auth');
+    if (auth !== undefined && auth !== 'kursant123') {
+      document.body.innerHTML = '<h1>Доступ запрещен. Укажите правильный пароль через ?auth=ВАШ_ПАРОЛЬ</h1>';
+      return;
+    }
+
+    loadGrades();
+  } catch (err) {
+    console.error(err);
+    document.body.innerHTML = '<h1>Ошибка: база данных недоступна. Попробуйте позже.</h1>';
+  }
+}
+
+async function loadGrades() {
+  try {
+    const records = await pb.collection('grades').getFullList({ sort: '-created' });
+
+    let html = `<h1>Лист личных достижений курсанта</h1>`;
+    html += `<table border="1" cellpadding="5" cellspacing="0">
+              <tr>
+                <th>Имя студента</th>
+                <th>Предмет</th>
+                <th>Оценка</th>
+                <th>Статус</th>
+              </tr>`;
+
+    records.forEach(r => {
+      html += `<tr>
+                <td>${r.student_name}</td>
+                <td>${r.subject}</td>
+                <td>${r.score}</td>
+                <td>${r.status}</td>
+              </tr>`;
+    });
+
+    html += `</table>`;
+    document.body.innerHTML = html;
+  } catch (err) {
+    console.error(err);
+    document.body.innerHTML = '<h1>Ошибка: база данных недоступна. Попробуйте позже.</h1>';
+  }
+}
+
+window.onload = init;
+</script>
+</body>
+</html>

@@ -16,12 +16,16 @@ app.use((req, res, next) => {
 // Статика фронтенда
 app.use(express.static(path.join(__dirname, 'public')));
 
-// API для получения оценок
+// API для конфигурации фронтенда
+app.get('/config', (req, res) => {
+  res.json({ pbUrl: PB_URL });
+});
+
+// API для получения оценок студентов
 app.get('/grades', async (req, res) => {
   const pb = new PocketBase(PB_URL);
 
   try {
-    // Получаем все записи из коллекции "grades"
     const grades = await pb.collection('grades').getFullList();
     res.json(grades);
   } catch (err) {
@@ -31,6 +35,7 @@ app.get('/grades', async (req, res) => {
 });
 
 // SPA fallback (Express 5 совместимый)
+// Должен идти **после всех API маршрутов**
 app.get(/^\/.*$/, (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });

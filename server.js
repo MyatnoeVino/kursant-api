@@ -26,12 +26,12 @@ app.get('/grades', async (req, res) => {
     res.json(grades);
   } catch (err) {
     console.error('Ошибка PocketBase:', err.message);
-    res.status(500).send('База данных временно недоступна. Попробуйте позже.');
+    res.status(500).json({ error: 'База данных временно недоступна. Попробуйте позже.' });
   }
 });
 
-// SPA fallback
-app.use((req, res) => {
+// SPA fallback для фронтенда
+app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 

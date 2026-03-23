@@ -3,18 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Личный кабинет студента</title>
+  <title>Таблица оценок студента</title>
   <style>
-    body { font-family: sans-serif; margin: 40px; }
-    table { border-collapse: collapse; width: 100%; }
-    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-    th { background: #f2f2f2; }
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    h1 { color: #333; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #f5f5f5; }
+    #error { color: red; margin-top: 20px; }
   </style>
 </head>
 <body>
   <h1>Таблица оценок студента</h1>
   <div id="content">Загрузка данных...</div>
+  <div id="error"></div>
 
-  <script src="front.js"></script>
+  <script type="module" src="front.js"></script>
 </body>
 </html>

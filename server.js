@@ -5,14 +5,8 @@ const PocketBase = require('pocketbase/cjs');
 const app = express();
 const pb = new PocketBase(process.env.PB_URL);
 
-// Middleware: проверка пароля через query ?auth=
-app.use((req, res, next) => {
-  const auth = req.query.auth;
-  if (auth !== process.env.PASSWORD) {
-    return res.send('<h1>Доступ запрещен. Укажите правильный пароль через ?auth=ВАШ_ПАРОЛЬ</h1>');
-  }
-  next();
-});
+// Убрана проверка пароля через query ?auth
+// app.use((req, res, next) => { ... });
 
 app.get('/', async (req, res) => {
   try {

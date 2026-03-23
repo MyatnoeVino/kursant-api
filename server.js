@@ -14,8 +14,8 @@ app.get('/config', (req, res) => {
   res.json({ pbUrl: PB_URL });
 });
 
-// Wildcard для SPA
-app.get('*', (req, res) => {
+// SPA wildcard — ловим все маршруты
+app.get('/:path(*)', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 

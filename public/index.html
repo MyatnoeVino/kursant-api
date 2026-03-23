@@ -28,11 +28,32 @@
       margin-bottom: 20px;
     }
 
+    input {
+      padding: 10px;
+      width: 70%;
+      margin-right: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 10px 15px;
+      border: none;
+      background: #667eea;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #5a67d8;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      overflow: hidden;
       border-radius: 10px;
+      overflow: hidden;
     }
 
     th {
@@ -89,7 +110,18 @@
   <div class="container">
     <h1>📊 Таблица оценок студента</h1>
 
-    <div id="content" class="loading">Загрузка данных...</div>
+    <!-- 🔐 Авторизация -->
+    <div id="auth">
+      <h2>Вход</h2>
+      <input type="password" id="password" placeholder="Введите пароль" />
+      <button onclick="login()">Войти</button>
+      <div id="auth-error" class="error"></div>
+    </div>
+
+    <!-- 📊 Контент -->
+    <div id="content" class="loading" style="display:none;">
+      Загрузка данных...
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/pocketbase@0.26.8/dist/pocketbase.umd.js"></script>

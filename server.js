@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
-const PocketBase = require('pocketbase/cjs'); // Node.js версия
+const PocketBase = require('pocketbase/cjs');
 const app = express();
 
 const PORT = process.env.PORT || 3000;
@@ -21,7 +21,6 @@ app.get('/grades', async (req, res) => {
   const pb = new PocketBase(PB_URL);
 
   try {
-    // Публичный доступ к коллекции "grades"
     const grades = await pb.collection('grades').getFullList();
     res.json(grades);
   } catch (err) {
@@ -30,8 +29,8 @@ app.get('/grades', async (req, res) => {
   }
 });
 
-// SPA fallback для фронтенда
-app.get('*', (req, res) => {
+// SPA fallback для Express 5
+app.get('/:path(*)', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 

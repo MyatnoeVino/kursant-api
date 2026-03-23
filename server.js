@@ -9,13 +9,13 @@ const PB_URL = process.env.PB_URL || 'http://localhost:8080';
 // Статика фронтенда
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Роут для передачи конфигурации фронтенду
+// API роут для конфигурации
 app.get('/config', (req, res) => {
   res.json({ pbUrl: PB_URL });
 });
 
-// SPA wildcard — ловим все маршруты
-app.get('/:path(*)', (req, res) => {
+// Ловим все остальные маршруты SPA
+app.use((req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 

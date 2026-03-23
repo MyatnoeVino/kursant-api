@@ -1,30 +1,46 @@
-async function loadGrades() {
-  const container = document.getElementById('content');
+// Подгружаем конфиг сервера
+fetch('/config')
+  .then(res => res.json())
+  .then(async config => {
+    const pbUrl = config.pbUrl;
 
-  try {
-    const res = await fetch('/grades');
-    if (!res.ok) throw new Error('Сеть недоступна');
+    try {
+      // Подключаемся к PocketBase
+      const { default: PocketBase } = await import('pocketbase');
+      const pb = new PocketBase(pbUrl);
 
-    const grades = await res.json();
-    if (!grades.length) {
-      container.innerHTML = '<p>Оценки не найдены.</p>';
-      return;
+      // Получаем все записи из коллекции grades
+      const records = await pb.collection('grades').getFullList();
+
+      if (!records.length) {
+        document.getElementById('content').innerHTML = 'Нет записей для отображения.';
+        return;
+      }
+
+      // Строим HTML-таблицу
+      let table = '<table>';
+      table += '<tr><th>Студент</th><th>Предмет</th><th>Оценка</th><th>Статус</th></tr>';
+
+      records.forEach(r => {
+        table += `<tr>
+                    <td>${r.student_name}</td>
+                    <td>${r.subject}</td>
+                    <td>${r.score}</td>
+                    <td>${r.status}</td>
+                  </tr>`;
+      });
+
+      table += '</table>';
+      document.getElementById('content').innerHTML = table;
+
+    } catch (err) {
+      console.error(err);
+      document.getElementById('content').innerHTML = '';
+      document.getElementById('error').innerText = 'Ошибка при загрузке данных: ' + err.message;
     }
-
-    let html = '<table><tr><th>Студент</th><th>Предмет</th><th>Оценка</th><th>Статус</th></tr>';
-    grades.forEach(g => {
-      html += `<tr>
-        <td>${g.student_name || '-'}</td>
-        <td>${g.subject || '-'}</td>
-        <td>${g.score || '-'}</td>
-        <td>${g.status || '-'}</td>
-      </tr>`;
-    });
-    html += '</table>';
-    container.innerHTML = html;
-  } catch (err) {
-    container.innerHTML = `<p>Ошибка при загрузке данных: ${err.message}</p>`;
-  }
-}
-
-loadGrades();
+  })
+  .catch(err => {
+    console.error(err);
+    document.getElementById('content').innerHTML = '';
+    document.getElementById('error').innerText = 'Ошибка при получении конфигурации: ' + err.message;
+  });

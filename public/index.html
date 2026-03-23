@@ -3,19 +3,97 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Таблица оценок студента</title>
+  <title>Оценки курсанта</title>
+
   <style>
-    table { border-collapse: collapse; width: 100%; }
-    th, td { border: 1px solid #333; padding: 8px; text-align: left; }
-    th { background-color: #eee; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 50px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 10px;
+    }
+
+    th {
+      background: #667eea;
+      color: white;
+      padding: 12px;
+      text-align: left;
+    }
+
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+    }
+
+    tr:hover {
+      background-color: #f5f7ff;
+    }
+
+    .status {
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .done {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .progress {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .fail {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .loading, .error {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 18px;
+    }
+
+    .error {
+      color: red;
+    }
   </style>
 </head>
 <body>
-  <h1>Таблица оценок студента</h1>
-  <div id="content">Загрузка данных...</div>
 
-  <!-- UMD версия PocketBase для браузера -->
+  <div class="container">
+    <h1>📊 Таблица оценок студента</h1>
+
+    <div id="content" class="loading">Загрузка данных...</div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/pocketbase@0.26.8/dist/pocketbase.umd.js"></script>
   <script src="front.js"></script>
+
 </body>
 </html>
